@@ -1,40 +1,63 @@
-# Habilitar compresión GZIP
+# Servicios MRR - Optimizaciones de servidor para SEO
+
+# Habilitar mod_rewrite
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Redirigir HTTP a HTTPS (cuando esté en producción)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Redirigir www a no-www
+  # RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+  # RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+</IfModule>
+
+# Comprensión GZIP
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript
+  AddOutputFilterByType DEFLATE image/svg+xml
 </IfModule>
 
-# Cacheo de archivos estáticos
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType image/jpg "access plus 1 year"
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
+# Caché del navegador
+<IfModule mod_headers.c>
+  # Caché para imágenes (1 año)
+  <FilesMatch "\.(jpg|jpeg|png|gif|ico|webp|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Caché para CSS y JavaScript (1 mes)
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=2592000, immutable"
+  </FilesMatch>
+
+  # Caché para fuentes (1 año)
+  <FilesMatch "\.(ttf|otf|woff|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Sin caché para HTML (siempre fresco)
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
 </IfModule>
 
-# Forzar HTTPS (descomentar cuando tengas SSL)
-# RewriteEngine On
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# Tipo MIME
+AddType application/json .json
+AddType video/mp4 .mp4
+AddType image/webp .webp
+AddType application/xml+rss .xml
 
-# Redirección de www a no-www (o viceversa según prefieras)
-# RewriteEngine On
-# RewriteCond %{HTTP_HOST} ^www\.serviciosmrr\.com [NC]
-# RewriteRule ^(.*)$ https://serviciosmrr.com/$1 [L,R=301]
-
-# Página de error personalizada (opcional)
-# ErrorDocument 404 /404.html
-
-# Prevenir listado de directorios
-Options -Indexes
-
-# Proteger archivos sensibles
-<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|sql)$">
-    Order Allow,Deny
+# Prevenir acceso a archivos sensibles
+<FilesMatch "^\.|\.htaccess|\.env|\.git|\.json$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
     Deny from all
+  </IfModule>
 </FilesMatch>
 
+# ETag para mejor caché
+FileETag MTime Size

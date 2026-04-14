@@ -30,9 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const fondo = document.getElementById("fondo-animado");
   if (fondo) {
     const imagenes = [
-      "IMAGENES/FONDOS5.png",
-      "IMAGENES/fondos2.jpg",
-      "IMAGENES/FONDOS6.jpg",
+      "IMAGENES/1.jpeg",
+      "IMAGENES/2.jpg",
+      "IMAGENES/3.jpg",
+      "IMAGENES/4.jpg",
+      "IMAGENES/5.jpg",
+      "IMAGENES/6.jpg",
+      "IMAGENES/7.jpg",
+      "IMAGENES/9.jpg",
     ];
     let index = 0;
 

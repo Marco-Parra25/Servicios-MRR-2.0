@@ -1,10 +1,33 @@
+# Servicios MRR - Robots.txt
+# Optimizado para SEO
+
+# Permitir todos los bots
 User-agent: *
 Allow: /
+Disallow: /.*\.DS_Store
+Disallow: /.vscode/
 
-# Sitemap
+# Configuración específica para Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Configuración específica para Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Configuración específica para otros bots
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+# Sitemaps
 Sitemap: https://serviciosmrr.com/sitemap.xml
 
-# Disallow admin or private areas if any
-# Disallow: /admin/
-# Disallow: /private/
+# Tiempo de re-crawl
+# Google respeta el cambio de contenido automáticamente
+# pero esto es una sugerencia
+Request-rate: 30/1m
+Visit-time: 0600-2400
 
